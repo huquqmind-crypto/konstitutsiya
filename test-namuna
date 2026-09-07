@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="uz" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@huququstoz | Premium DTM Imtihon Platformasi</title>
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0f6ff',
+                            100: '#e0effe',
+                            500: '#2563eb',
+                            600: '#1d4ed8',
+                            700: '#1e40af',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            -webkit-font-smoothing: antialiased;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+            border-radius: 16px;
+        }
+        .dark .glass-card {
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid rgba(51, 65, 85, 0.8);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+        @keyframes timer-pulse {
+            0%, 100% { background-color: #ef4444; color: white; }
+            50% { background-color: #fee2e2; color: #991b1b; }
+        }
+        .timer-alert { animation: timer-pulse 1s infinite; }
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .dark ::-webkit-scrollbar-thumb { background: #334155; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-[#0f172a] dark:text-slate-100 min-h-screen">
+
+    <!-- PRE-AUTH SCREEN -->
+    <div id="authScreen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+        <div class="glass-card max-w-md w-full p-8 space-y-6 text-center shadow-2xl">
+            <div class="w-16 h-16 bg-brand-600 text-white rounded-2xl flex items-center justify-center mx-auto text-2xl shadow-lg">
+                ⚖️
+            </div>
+            <div>
+                <h2 class="text-2xl font-extrabold tracking-tight">@huququstoz</h2>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Konstitutsiya bo'yicha DTM Elektron Imtihon Tizimi</p>
+            </div>
+            <form id="authForm" onsubmit="startExam(event)" class="space-y-4 text-left">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Ism va Familiya</label>
+                    <input type="text" id="authName" placeholder="Masalan: Azizbek Olimov" required class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 focus:ring-2 focus:ring-brand-500 focus:outline-none text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Telefon raqam</label>
+                    <input type="tel" id="authPhone" placeholder="+998 90 123 45 67" required class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 focus:ring-2 focus:ring-brand-500 focus:outline-none text-sm">
+                </div>
+                <button type="submit" class="w-full py-3.5 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl shadow-lg transition-all text-sm flex items-center justify-center space-x-2">
+                    <span>Imtihonni boshlash</span>
+                    <span>🚀</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MAIN EXAM ENVIRONMENT -->
+    <div id="examEnvironment" class="hidden">
+        
+        <!-- HEADER -->
+        <header class="sticky top-0 z-40 bg-white/95 dark:bg-[#0f172a]/95 border-b border-slate-200 dark:border-slate-800 px-4 py-3 shadow-sm backdrop-blur-md">
+            <div class="max-w-7xl mx-auto flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-brand-600 text-white font-bold px-3 py-1.5 rounded-xl text-xs md:text-sm">
+                        ⚖️ @huququstoz
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-xs md:text-sm leading-tight">Konstitutsiya Test Platformasi</h1>
+                        <p class="text-[10px] text-slate-500 dark:text-slate-400">Abituriyent: <span id="displayUser" class="font-semibold text-brand-600 dark:text-brand-400"></span></p>
+                    </div>
+                </div>
+
+                <!-- TOP TIMER & DARK MODE -->
+                <div class="flex items-center space-x-3">
+                    <div class="flex items-center space-x-2 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700">
+                        <svg class="w-4 h-4 text-brand-600 dark:text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <div id="timerDisplay" class="text-xs md:text-sm font-mono font-bold text-slate-800 dark:text-white">
+                            90:00
+                        </div>
+                    </div>
+                    <button onclick="toggleDarkMode()" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700" title="Rejimni o'zgartirish">
+                        <svg id="sunIcon" class="w-5 h-5 hidden dark:block text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                        <svg id="moonIcon" class="w-5 h-5 block dark:hidden text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- CONTAINER GRID -->
+        <main class="max-w-7xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6 mb-20 lg:mb-12">
+            
+            <!-- LEFT COLUMN: Questions -->
+            <div class="lg:col-span-8 space-y-6">
+                
+                <!-- Closed Tests Section -->
+                <div class="glass-card p-6 space-y-6">
+                    <div class="border-b border-slate-200 dark:border-slate-800 pb-3 flex justify-between items-center">
+                        <h2 class="font-bold text-base text-brand-600 dark:text-brand-400">I-BO'LIM: Yopiq testlar (35 ta)</h2>
+                        <span class="text-xs bg-brand-50 dark:bg-slate-800 text-brand-600 dark:text-brand-300 px-3 py-1 rounded-full font-semibold">DTM Standarti</span>
+                    </div>
+                    <div id="closedQuestionsContainer" class="space-y-6"></div>
+                </div>
+
+                <!-- Open Questions Section -->
+                <div class="glass-card p-6 space-y-6">
+                    <div class="border-b border-slate-200 dark:border-slate-800 pb-3 flex justify-between items-center">
+                        <h2 class="font-bold text-base text-brand-600 dark:text-brand-400">II-BO'LIM: Ochiq savollar (10 ta)</h2>
+                        <span class="text-xs bg-amber-50 dark:bg-slate-800 text-amber-600 dark:text-amber-300 px-3 py-1 rounded-full font-semibold">Maksimal 500 belgi</span>
+                    </div>
+                    <div id="openQuestionsContainer" class="space-y-6"></div>
+                </div>
+
+                <!-- Submit Button -->
+                <button onclick="submitExam()" class="w-full py-4 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-2xl shadow-xl transition-all text-base">
+                    Testni yakunlash va natijani yuborish 🚀
+                </button>
+            </div>
+
+            <!-- RIGHT COLUMN: Desktop Sticky Sidebar -->
+            <div class="hidden lg:block lg:col-span-4">
+                <div class="glass-card p-5 space-y-4 sticky top-20">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Elektron Titul (1-35)</span>
+                        <span id="answeredCountDesktop" class="text-xs font-bold text-brand-600 dark:text-brand-400">0 / 35</span>
+                    </div>
+                    <div id="dtmGridDesktop" class="grid grid-cols-5 gap-1.5 max-h-72 overflow-y-auto p-1.5 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-900"></div>
+                    <div class="pt-2">
+                        <button onclick="submitExam()" class="w-full py-3.5 bg-brand-600 hover:bg-brand-700 text-white font-semibold rounded-xl shadow-lg transition-all text-sm">
+                            Testni yakunlash
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- MOBILE FLOATING BUTTON -->
+    <div class="lg:hidden fixed bottom-4 right-4 z-40">
+        <button onclick="toggleMobileDrawer(true)" class="flex items-center space-x-2 bg-brand-600 hover:bg-brand-700 text-white px-4 py-3 rounded-2xl shadow-xl font-bold text-xs">
+            <span>📊 Titul & Javoblar</span>
+            <span id="answeredCountMobile" class="bg-white text-brand-600 px-2 py-0.5 rounded-lg text-xs">0/35</span>
+        </button>
+    </div>
+
+    <!-- MOBILE DRAWER MODAL -->
+    <div id="mobileDrawer" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-end">
+        <div class="glass-card w-full p-6 rounded-t-3xl max-h-[80vh] overflow-y-auto space-y-4">
+            <div class="flex justify-between items-center border-b border-slate-200 dark:border-slate-700 pb-3">
+                <h3 class="font-bold text-sm">Elektron Titul (1-35 doirachalar)</h3>
+                <button onclick="toggleMobileDrawer(false)" class="p-1 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs px-3 py-1">Yopish ✕</button>
+            </div>
+            <div id="dtmGridMobile" class="grid grid-cols-7 gap-2 p-2 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700"></div>
+            <button onclick="toggleMobileDrawer(false); submitExam();" class="w-full py-3 bg-brand-600 text-white font-bold rounded-xl text-sm shadow-md">
+                Testni yakunlash va yuborish 🚀
+            </button>
+        </div>
+    </div>
+
+    <!-- SUCCESS MODAL -->
+    <div id="successModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-md hidden px-4">
+        <div class="glass-card max-w-md w-full p-8 text-center space-y-4 shadow-2xl">
+            <div class="w-16 h-16 bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 rounded-2xl flex items-center justify-center mx-auto text-3xl shadow-inner">
+                🎉
+            </div>
+            <h3 class="text-xl font-bold">Imtihon yakunlandi!</h3>
+            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                Javoblar muvaffaqiyatli yuborildi. Rasmiy natijalar va tahlillar yaqin orada <b>@huququstoz</b> kanalida e'lon qilinadi.
+            </p>
+            <div class="pt-2">
+                <button onclick="window.location.reload()" class="w-full py-3 bg-slate-900 dark:bg-slate-800 hover:bg-slate-800 text-white font-medium rounded-xl transition-colors text-sm shadow-md">
+                    Bosh sahifaga qaytish
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        const BOT_TOKEN = "8819420318:AAEiPoczZhe9tgMRsaWcwVmnvSyRUHlp4Dw";
+        const CHAT_ID = "6345301727";
+
+        // ===================== 35 TA YOPIQ SAVOL =====================
+        const questionsData = [
+            { id: 1, text: `Quyidagi davlat organlarini ularning vakolatiga mos ta'rif bilan moslashtiring.
+
+I. Konstitutsiyaviy sud
+II. Sudyalar oliy kengashi
+III. Bosh prokuratura
+IV. Hisob palatasi
+V. Markaziy saylov komissiyasi
+
+a) Davlat organlari va mansabdor shaxslarning normativ hujjatlari Konstitutsiyaga muvofiqligini tekshiradi
+b) Sudyalarni tayinlash va ularning faoliyatiga oid masalalarni hal etadi
+c) Bosh prokuror boshchilik qiladi, qonunlarning aniq va bir xilda ijro etilishi ustidan nazorat qiladi
+d) Davlat byudjeti ijrosi ustidan moliyaviy nazoratni amalga oshiradi
+e) Referendum va saylovlarni tashkil etish hamda o'tkazishni ta'minlaydi`,
+              options: [`I-a, II-b, III-c, IV-d, V-e`, `I-b, II-a, III-d, IV-c, V-e`, `I-a, II-c, III-b, IV-e, V-d`, `I-e, II-d, III-c, IV-b, V-a`] },
+
+            { id: 2, text: `Fuqaro B. saylov kuni 25 yoshni to'ldirgan, biroq so'nggi 4 yil davomida chet elda ishlab, O'zbekistonga saylovdan atigi 4 yil oldin qaytib kelgan. U Oliy Majlis Qonunchilik palatasiga deputatlikka nomzod sifatida ro'yxatga olinishni so'ramoqda.
+
+Markaziy saylov komissiyasi qanday qaror qabul qilishi kerak?`,
+              options: [`Ro'yxatga olish kerak, chunki yosh talabiga javob beradi`, `Rad etish kerak, chunki kamida besh yil muqim yashash sharti bajarilmagan`, `Rad etish kerak, chunki yosh talabiga javob bermaydi`, `Ro'yxatga olish kerak, chunki muqim yashash muddati talab etilmaydi`] },
+
+            { id: 3, text: `Prezident P. ketma-ket ikki muddat davomida saylanib, umumiy 14 yillik vakolatini tugatdi. Ma'lum bir tanaffusdan (bir muddatdan) so'ng u yana Prezidentlikka nomzod bo'lishni istamoqda.
+
+Konstitutsiyaning 90-moddasi matniga ko'ra bu masalani qanday tushunish kerak?`,
+              options: [`Yo'q, chunki hech kim umuman ikki muddatdan ortiq Prezident bo'la olmaydi`, `Norma matniga ko'ra faqat "surunkasiga (ketma-ket) ikki muddatdan ortiq" bo'lish taqiqlangan; tanaffusdan keyin nomzod bo'lish normaning sof matni asosida to'g'ridan-to'g'ri man etilmagan`, `Yo'q, chunki Konstitutsiyada "umrbod bir marta" degan qoida bor`, `Ha, chunki Konstitutsiyada muddatlar chegarasi umuman ko'rsatilmagan`] },
+
+            { id: 4, text: `Qonunchilik palatasi qabul qilgan qonun necha kun ichida Senatga yuboriladi, Senat uni necha kun ichida ko'rib chiqadi va ma'qullangan qonun Prezidentga necha kun ichida yuboriladi?`,
+              options: [`10 kun; 60 kun; 10 kun`, `5 kun; 30 kun; 14 kun`, `15 kun; 90 kun; 7 kun`, `10 kun; 30 kun; 5 kun`] },
+
+            { id: 5, text: `Favqulodda holat yoki urush holati e'lon qilingach, Prezident tegishli farmonni necha kun ichida Oliy Majlis palatalari tasdig'iga kiritishi shart?`,
+              options: [`3 kun`, `5 kun`, `7 kun`, `10 kun`] },
+
+            { id: 6, text: `Prezidentlikka nomzod bo'lish uchun zarur bo'lgan eng kam yosh va saylovgacha O'zbekiston hududida muqim yashash muddati mos ravishda qanday?`,
+              options: [`30 yosh, 5 yil`, `35 yosh, 10 yil`, `40 yosh, 15 yil`, `35 yosh, 5 yil`] },
+
+            { id: 7, text: `Qonunchilik palatasi deputati va Senat a'zosi bo'lish uchun talab qilinadigan eng kam yosh va muqim yashash muddati qanday?`,
+              options: [`21 yosh, 3 yil`, `25 yosh, 5 yil`, `30 yosh, 7 yil`, `18 yosh, 1 yil`] },
+
+            { id: 8, text: `Quyidagi bayonotlardan qaysilari to'g'ri?
+
+1) Oliy Majlis ikki palatadan iborat: Qonunchilik palatasi va Senat.
+2) Qonunchilik palatasi 150 deputatdan, Senat 100 a'zodan iborat.
+3) Qonunchilik palatasi va Senatning vakolat muddati — besh yil.
+4) Senat hududiy vakillik palatasi bo'lib, uning barcha a'zolari saylanadi.`,
+              options: [`1, 3`, `1, 4`, `2, 3`, `2, 4`] },
+
+            { id: 9, text: `Quyidagi bayonotlardan qaysilari to'g'ri?
+
+1) Prezident lavozimiga saylanish uchun kamida 35 yoshga to'lgan bo'lish kerak.
+2) Bir shaxs ketma-ket cheksiz marta Prezident bo'la oladi.
+3) Prezident xalq tomonidan umumiy, teng, to'g'ridan-to'g'ri va yashirin ovoz berish yo'li bilan saylanadi.
+4) Prezidentlikka nomzod davlat tilini bilishi shart emas.`,
+              options: [`1, 3`, `1, 4`, `2, 3`, `2, 4`] },
+
+            { id: 10, text: `Quyidagi bayonotlardan qaysilari to'g'ri?
+
+1) Konstitutsiyaviy qonunlar qabul qilinganda palata a'zolarining kamida uchdan ikki qismi ishtirok etishi shart.
+2) Palata qarorlari faqat majlisda ishtirok etayotganlarning ko'pchilik ovozi bilan qabul qilinadi, umumiy sonidan qat'i nazar.
+3) Qonunchilik tashabbusi huquqiga, jumladan, Konstitutsiyaviy sud va Oliy sud ham ega.
+4) Har qanday qonun loyihasi faqat Prezident tomonidan taklif etilishi mumkin.`,
+              options: [`1, 3`, `1, 4`, `2, 3`, `2, 4`] },
+
+            { id: 11, text: `Quyidagi bayonotlardan qaysilari to'g'ri?
+
+1) "Yashash huquqi" shaxsiy huquqlar bobida (VII bob) mustahkamlangan.
+2) "Mehnat qilish huquqi" siyosiy huquqlar bobiga kiradi.
+3) "Vijdon erkinligi" siyosiy huquqlar bobida joylashgan.
+4) "Mitinglar, yig'ilishlar va namoyishlar o'tkazish huquqi" siyosiy huquqlar bobida (VIII bob) joylashgan.`,
+              options: [`1, 3`, `1, 4`, `2, 3`, `2, 4`] },
+
+            { id: 12, text: `Quyidagi bayonotlardan noto'g'risini toping.`,
+              options: [`Senat 65 a'zodan iborat bo'lib, ulardan 56 nafari hududlardan (har biridan 4 tadan) saylanadi.`, `Senatning 9 nafar a'zosi fan, san'at, ishlab chiqarish va boshqa sohalarda alohida xizmat ko'rsatgan fuqarolar orasidan Prezident tomonidan tayinlanadi.`, `Senat yiliga kamida to'rt marta majlis o'tkazadi.`, `Senat o'zini o'zi tarqatib yuborgan taqdirda, bir oy ichida uning yangi tarkibi shakllantiriladi.`] },
+
+            { id: 13, text: `Quyidagi bayonotlardan noto'g'risini toping.`,
+              options: [`Qonunchilik palatasi 150 deputatdan iborat bo'lib, besh yil muddatga saylanadi.`, `Qonunchilik palatasi sessiyalari, qoida tariqasida, sentyabrning birinchi ish kunidan kelgusi yilning iyun oyi oxirgi ish kunigacha o'tkaziladi.`, `Qonunchilik palatasi Spikeri palataning vakolat muddatiga saylanadi va uni muddatidan oldin chaqirib olish uchun deputatlar umumiy sonining yarmidan ko'pi ovoz berishi kifoya.`, `Qonunchilik palatasi Spikerini muddatidan oldin chaqirib olish uchun deputatlar umumiy sonining uchdan ikki qismidan ko'prog'i ovoz berishi lozim.`] },
+
+            { id: 14, text: `Quyidagi bayonotlardan noto'g'risini toping.`,
+              options: [`Prezident O'zbekiston Respublikasi Qurolli Kuchlarining Oliy Bosh qo'mondoni hisoblanadi.`, `Bosh vazir nomzodi Qonunchilik palatasida eng ko'p o'ringa ega siyosiy partiya (yoki teng ko'p o'ringa ega partiyalar) tomonidan taklif etiladi.`, `Prezident istalgan vaqtda, hech qanday asos ko'rsatmasdan Oliy Majlisning ikkala palatasini ham tarqatib yuborishi mumkin.`, `Prezident qonunni o'z e'tirozlari bilan qayta ko'rib chiqish uchun Oliy Majlisga qaytarishga haqli.`] },
+
+            { id: 15, text: `Quyidagi bayonotlardan noto'g'risini toping.`,
+              options: [`O'zbekiston Respublikasining butun hududida yagona fuqarolik o'rnatilgan.`, `Qoraqalpog'iston Respublikasining fuqarosi ayni vaqtda O'zbekiston Respublikasining fuqarosi hisoblanadi.`, `Chet el fuqarolari O'zbekistonda O'zbekiston fuqarolari bilan barcha jihatdan bir xil siyosiy huquqlarga, jumladan saylov huquqiga ega.`, `Fuqarolikka ega bo'lish va uni yo'qotish asoslari hamda tartibi qonun bilan belgilanadi.`] },
+
+            { id: 16, text: `Quyidagi bayonotlarni baholang:
+
+1) Qonun loyihasi Qonunchilik palatasida qabul qilinadi.
+2) Qabul qilingan qonun 10 kundan kechiktirmay Senatga yuboriladi.
+3) Senat qonunni rad etsa, u avtomatik ravishda kuchini yo'qotadi va qayta kiritilishi mumkin emas.
+4) Senat rad etgan qonunni Qonunchilik palatasi deputatlar umumiy sonining uchdan ikki qismi ko'pchilik ovozi bilan qayta ma'qullasa, qonun Oliy Majlis tomonidan qabul qilingan hisoblanadi.
+5) Prezident qonunni 30 kun ichida imzolashi yoki o'z e'tirozi bilan qaytarishi mumkin.`,
+              options: [`1, 2, 4, 5 — to'g'ri; 3 — noto'g'ri`, `barchasi to'g'ri`, `1, 2, 3 — to'g'ri; 4, 5 — noto'g'ri`, `faqat 1, 2 to'g'ri`] },
+
+            { id: 17, text: `Quyidagi bayonotlarni baholang:
+
+1) Har bir fuqaro qonun bilan belgilangan soliqlar va mahalliy yig'imlarni to'lashga majburdir.
+2) O'zbekiston Respublikasini himoya qilish faqat erkak fuqarolarning burchi hisoblanadi.
+3) Voyaga yetgan, mehnatga layoqatli farzandlar o'z ota-onalari haqida g'amxo'rlik qilishga majburdirlar.
+4) Fuqarolar O'zbekiston xalqining tarixiy, ma'naviy va madaniy merosini avaylab asrashga majburdirlar.
+5) Majburiy mehnat hech qanday holatda, hatto sud hukmi asosida ham qo'llanilishi mumkin emas.
+6) Ota-onalar o'z farzandlarini voyaga yetgunlariga qadar boqish va tarbiyalashga majburdirlar.`,
+              options: [`1, 3, 4, 6 — to'g'ri; 2, 5 — noto'g'ri`, `1, 2, 3, 4 — to'g'ri; 5, 6 — noto'g'ri`, `barcha bayonotlar to'g'ri`, `2, 5, 6 — to'g'ri; 1, 3, 4 — noto'g'ri`] },
+
+            { id: 18, text: `Quyidagi bayonotlarni baholang:
+
+1) O'zbekiston Respublikasi davlat hokimiyati tizimi qonun chiqaruvchi, ijro etuvchi va sud hokimiyatiga bo'linish prinsipiga asoslanadi.
+2) Qoraqalpog'iston Respublikasi o'z Konstitutsiyasiga ega bo'lib, u O'zbekiston Konstitutsiyasidan ustun turadi.
+3) Qoraqalpog'iston Respublikasi umumxalq referendumi asosida O'zbekiston Respublikasi tarkibidan ajralib chiqish huquqiga ega.
+4) Diniy tashkilotlar va birlashmalar davlatdan ajratilgan hamda qonun oldida tengdir.
+5) Hech qaysi mafkura davlat mafkurasi sifatida o'rnatilishi mumkin emas.`,
+              options: [`1, 3, 4, 5 — to'g'ri; 2 — noto'g'ri`, `barchasi to'g'ri`, `1, 2, 4, 5 — to'g'ri; 3 — noto'g'ri`, `faqat 1, 5 to'g'ri`] },
+
+            { id: 19, text: `Bosh vazir iste'foga chiqqanda yoki unga nisbatan ishonchsizlik votumi qabul qilinganda, uni lavozimidan kim ozod qiladi?`,
+              options: [`Oliy Majlis Qonunchilik palatasi`, `Oliy Majlis Senati`, `O'zbekiston Respublikasi Prezidenti`, `Vazirlar Mahkamasi majlisi`] },
+
+            { id: 20, text: `Sudyalar oliy kengashining raisini kim tayinlaydi?`,
+              options: [`Oliy Majlis Senati, Prezident taqdimiga binoan`, `O'zbekiston Respublikasi Prezidenti mustaqil ravishda`, `Oliy Majlis Qonunchilik palatasi`, `Konstitutsiyaviy sud`] },
+
+            { id: 21, text: `Amaldagi Prezident o'z vazifasini bajara olmaydigan holatlarda, uning vazifa va vakolatlarini vaqtincha kim bajaradi?`,
+              options: [`Bosh vazir`, `Oliy Majlis Qonunchilik palatasi Spikeri`, `Oliy Majlis Senati Raisi`, `Konstitutsiyaviy sud raisi`] },
+
+            { id: 22, text: `Viloyat va Toshkent shahar hokimlarini kim tayinlaydi?`,
+              options: [`O'zbekiston Respublikasi Prezidenti, Bosh vazir taqdimiga binoan`, `Vazirlar Mahkamasi mustaqil ravishda`, `Tegishli xalq deputatlari Kengashi`, `Oliy Majlis Senati`] },
+
+            { id: 23, text: `"Yer, yer osti boyliklari, suv, o'simlik va hayvonot dunyosi hamda boshqa tabiiy zaxiralar ______ boylikdir, ulardan oqilona foydalanish zarur va ular davlat muhofazasidadir." Nuqtalar o'rniga mos so'zni tanlang.`,
+              options: [`mahalliy`, `umummilliy`, `davlat`, `xususiy`] },
+
+            { id: 24, text: `"Mazkur Konstitutsiyaning birorta qoidasi O'zbekiston Respublikasi huquq va manfaatlariga zarar yetkazadigan tarzda ______ mumkin emas." Nuqtalar o'rniga mos so'zni tanlang.`,
+              options: [`o'zgartirilishi`, `bekor qilinishi`, `talqin etilishi`, `qo'llanilishi`] },
+
+            { id: 25, text: `"Bosh vazir lavozimiga nomzod Oliy Majlisda uning nomzodi ko'rib chiqilayotganda va tasdiqlanayotganda Vazirlar Mahkamasining ______ mo'ljallangan harakat dasturini taqdim etadi." Nuqtalar o'rniga mos javobni tanlang.`,
+              options: [`faqat yaqin muddatga`, `faqat uzoq istiqbolga`, `yaqin muddatga va uzoq istiqbolga`, `besh yillik davrga`] },
+
+            { id: 26, text: `"Oliy Majlisning Qonunchilik palatasi va Senati tarqatib yuborilgan taqdirda, yangi saylov ______ mobaynida o'tkaziladi." Nuqtalar o'rniga mos javobni tanlang.`,
+              options: [`bir oy`, `uch oy`, `olti oy`, `bir yil`] },
+
+            { id: 27, text: `Quyidagi huquqlardan qaysi biri "siyosiy huquqlar" (VIII bob) toifasiga kiradi?`,
+              options: [`Mulkdor bo'lish huquqi`, `Malakali tibbiy xizmatdan foydalanish huquqi`, `Kasaba uyushmalari, siyosiy partiyalarga uyushish huquqi`, `Bilim olish huquqi`] },
+
+            { id: 28, text: `Quyidagi davlat organlaridan qaysi biri ijro etuvchi hokimiyatga mansub?`,
+              options: [`Oliy Majlis Senati`, `Vazirlar Mahkamasi`, `Konstitutsiyaviy sud`, `Qonunchilik palatasi`] },
+
+            { id: 29, text: `Quyidagi vakolatlardan qaysi biri palatalarning birgalikdagi (78-modda) vakolatiga emas, balki aynan Senatning mutlaq vakolatiga (80-modda) tegishli?`,
+              options: [`Davlat byudjetini qabul qilish`, `Konstitutsiyaga o'zgartirish va qo'shimchalar kiritish`, `Prezident taqdimiga binoan Konstitutsiyaviy sudni saylash`, `Referendum o'tkazish to'g'risida qaror qabul qilish`] },
+
+            { id: 30, text: `"Qonunchilik palatasi deputati" va "Senat a'zosi" tushunchalarini solishtiring:
+I — faqat Qonunchilik palatasi deputatiga tegishli; II — faqat Senat a'zosiga tegishli; III — ikkalasiga umumiy.
+
+1) 150 kishidan iborat tarkibda ishlaydi
+2) Daxlsizlik huquqidan foydalanadi
+3) Hududiy vakillik palatasi a'zosi hisoblanadi
+4) Saylov kuni kamida 25 yoshga to'lgan bo'lishi shart
+5) Ba'zi a'zolari saylanmay, balki Prezident tomonidan tayinlanadi`,
+              options: [`I-{1}, II-{3,5}, III-{2,4}`, `I-{1,3}, II-{5}, III-{2,4}`, `I-{3}, II-{1,5}, III-{2,4}`, `I-{1,5}, II-{3}, III-{2,4}`] },
+
+            { id: 31, text: `"Konstitutsiyaviy qonun" va "oddiy qonun" tushunchalarini solishtiring:
+I — faqat konstitutsiyaviy qonunga tegishli; II — faqat oddiy qonunga tegishli; III — ikkalasiga umumiy.
+
+1) Qonunchilik palatasida qabul qilinib, Senatda ma'qullanadi
+2) Qabul qilinishi uchun palata a'zolari umumiy sonining kamida uchdan ikki qismi ishtirok etishi shart
+3) Odatdagi tartibda, palata a'zolarining kamida yarmi ishtirok etganda ham qabul qilinishi mumkin
+4) Prezident tomonidan imzolanadi va e'lon qilinadi
+5) Odatda davlat tuzilishi, organlar faoliyatining asosiy tamoyillarini belgilaydi`,
+              options: [`I-{2,5}, II-{3}, III-{1,4}`, `I-{2}, II-{3,5}, III-{1,4}`, `I-{5}, II-{2,3}, III-{1,4}`, `I-{2,3}, II-{5}, III-{1,4}`] },
+
+            { id: 32, text: `Yangi tahrirdagi Konstitutsiya qachondan kuchga kirgan?`,
+              options: [`2022-yil 1-yanvardan`, `2023-yil 1-maydan`, `2024-yil 1-yanvardan`, `2021-yil 1-dekabrdan`] },
+
+            { id: 33, text: `Yangi tahrirdagi Konstitutsiya nechta bo'lim, bob va moddadan iborat?`,
+              options: [`5 bo'lim, 25 bob, 128 modda`, `6 bo'lim, 27 bob, 155 modda`, `7 bo'lim, 30 bob, 160 modda`, `6 bo'lim, 26 bob, 150 modda`] },
+
+            { id: 34, text: `Quyidagi huquqlarni ular mustahkamlangan bobga moslashtiring:
+a) Iqtisodiy va ijtimoiy huquqlar (IX bob)
+b) Siyosiy huquqlar (VIII bob)
+c) Shaxsiy huquq va erkinliklar (VII bob)
+
+I. Yashash huquqi
+II. Mehnat qilish huquqi
+III. Mitingda ishtirok etish huquqi
+IV. Bilim olish huquqi
+V. Turar joy daxlsizligi huquqi`,
+              options: [`I-c, II-a, III-b, IV-a, V-c`, `I-a, II-c, III-b, IV-a, V-c`, `I-c, II-b, III-a, IV-c, V-a`, `I-b, II-a, III-c, IV-a, V-b`] },
+
+            { id: 35, text: `Tuman hokimi tomonidan qonunchilik normalariga zid me'yoriy hujjat qabul qilindi. Bu haqda O'zbekiston Respublikasi Prezidentiga ma'lumot yetib bordi.
+
+Konstitutsiyaga ko'ra Prezident bunday holatda qanday chora ko'rishga haqli?`,
+              options: [`Faqat ogohlantirish xati yuborishi mumkin, boshqa vakolati yo'q`, `Qonunchilik normalariga nomuvofiq bo'lgan hujjatni to'xtatish yoki bekor qilishga haqli`, `Faqat sudga murojaat qilishi mumkin, o'zi bekor qila olmaydi`, `Bunday vakolat faqat Bosh prokurorga tegishli`] }
+        ];
+
+        // To'g'ri javoblar (A/B/C/D)
+        const correctAnswers = {
+            1:'A', 2:'B', 3:'B', 4:'A', 5:'A',
+            6:'B', 7:'B', 8:'A', 9:'A', 10:'A',
+            11:'B', 12:'C', 13:'C', 14:'C', 15:'C',
+            16:'A', 17:'A', 18:'A', 19:'C', 20:'A',
+            21:'C', 22:'A', 23:'B', 24:'C', 25:'C',
+            26:'B', 27:'C', 28:'B', 29:'C', 30:'A',
+            31:'A', 32:'B', 33:'B', 34:'A', 35:'B'
+        };
+
+        // ===================== 10 TA OCHIQ (KAZUS) SAVOL =====================
+        const openQuestionsData = [
+            { id: 1, text: `Fuqaro Sh. o'z shaxsiy blogida hukumat siyosatini tanqid qilib maqola chop etdi. Tegishli organ maqolani "davlat siriga oid" deb topib, hech qanday sud qarori yoki asos ko'rsatmasdan blogni yopib qo'ydi. Vaziyatni Konstitutsiyaning 29-moddasi asosida tahlil qiling.` },
+            { id: 2, text: `Fuqaro K.ning uyida tergovchilar tomonidan tintuv o'tkazilmoqchi bo'ldi, biroq ularda sud ruxsatnomasi yo'q edi. K. qarshilik ko'rsatdi. Bu vaziyatni tegishli modda asosida baholang.` },
+            { id: 3, text: `26 yoshli fuqaro doimiy ravishda O'zbekistonda yashaydi, biroq so'nggi 6 yildan beri chet davlat fuqaroligiga ham ega (amalda ikki fuqarolik holati). U Qonunchilik palatasiga deputatlikka nomzod bo'lmoqchi. Vaziyatni yagona fuqarolik tamoyili nuqtai nazaridan tahlil qiling.` },
+            { id: 4, text: `Diniy tashkilot davlat organidan o'z faoliyatiga aralashmaslikni talab qilish bilan bir vaqtda davlat byudjetidan moliyaviy yordam berilishini so'ramoqda. Vaziyatni 61-modda asosida baholang.` },
+            { id: 5, text: `Voyaga yetgan yosh er-xotin nikohdan o'tmoqda, biroq ota-onalardan biri bunga qarshi. Nikoh, shunga qaramay, tomonlarning o'zaro roziligi bilan ro'yxatga olindi. Vaziyatni 63-modda asosida baholang.` },
+            { id: 6, text: `Prezidentlik saylovida g'olib chiqqan nomzod saylov kuni 34 yoshu 11 oyda bo'lgan, biroq qasamyod marosimi kuniga kelib 35 yoshga to'lgan. Vaziyatni 90-modda matni asosida, 77-moddadagi o'xshash formula bilan solishtirib tahlil qiling.` },
+            { id: 7, text: `Favqulodda holat sharoitida Qonunchilik palatasi o'zini o'zi tarqatib yubormoqchi bo'ldi. Bu Konstitutsiyaga muvofiqmi?` },
+            { id: 8, text: `Bosh vazirlikka taqdim etilgan nomzod Oliy Majlis tomonidan ikki marta ketma-ket rad etildi. Prezident bu vaziyatda qanday harakat qilishi kerak?` },
+            { id: 9, text: `Qoraqalpog'iston Respublikasi o'z hududida qabul qilingan O'zbekiston Respublikasi qonunini mahalliy manfaatlariga zid deb, uni qo'llashdan bosh tortdi. Bu qonuniymi?` },
+            { id: 10, text: `Vakolat muddati tugagach iste'foga chiqqan sobiq Prezident "men endi oddiy fuqaroman" deb, Senat majlislariga taklif etilganda kelishdan bosh tortmoqda. Bu masalani 97-modda asosida tushuntiring.` }
+        ];
+
+        let userData = { name: '', phone: '' };
+        let userAnswers = {};
+        let timerInterval = null;
+        let totalSeconds = 90 * 60;
+
+        function startExam(event) {
+            event.preventDefault();
+            const name = document.getElementById('authName').value.trim();
+            const phone = document.getElementById('authPhone').value.trim();
+            if (!name || !phone) return;
+
+            userData.name = name;
+            userData.phone = phone;
+            document.getElementById('displayUser').innerText = name;
+
+            document.getElementById('authScreen').classList.add('hidden');
+            document.getElementById('examEnvironment').classList.remove('hidden');
+
+            setTimeout(() => {
+                generateClosedQuestions();
+                generateOpenQuestions();
+                generateDtmGrids();
+                startTimer();
+            }, 50);
+        }
+
+        function nl2br(str) {
+            return str.replace(/\n/g, '<br>');
+        }
+
+        function generateClosedQuestions() {
+            const container = document.getElementById('closedQuestionsContainer');
+            const letters = ['A', 'B', 'C', 'D'];
+            let html = '';
+            questionsData.forEach(q => {
+                html += `
+                    <div class="p-4 rounded-xl bg-slate-50/50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-700/60">
+                        <p class="font-semibold text-xs md:text-sm mb-3 whitespace-pre-line"><span class="text-brand-600 font-bold">${q.id}.</span> ${nl2br(q.text)}</p>
+                        <div class="grid grid-cols-1 gap-2">
+                            ${q.options.map((optText, idx) => `
+                                <label class="flex items-start space-x-2.5 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-brand-50 dark:hover:bg-slate-700 cursor-pointer">
+                                    <input type="radio" name="q${q.id}" value="${letters[idx]}" onchange="handleAnswer(${q.id}, '${letters[idx]}')" class="mt-0.5 text-brand-600 focus:ring-brand-500 h-4 w-4 shrink-0">
+                                    <span class="text-xs md:text-sm font-medium">${letters[idx]}) ${optText}</span>
+                                </label>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function generateOpenQuestions() {
+            const container = document.getElementById('openQuestionsContainer');
+            let html = '';
+            openQuestionsData.forEach(q => {
+                html += `
+                    <div class="p-4 rounded-xl bg-slate-50/50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-700/60">
+                        <div class="flex justify-between items-start mb-2 gap-3">
+                            <p class="font-semibold text-xs md:text-sm"><span class="text-amber-600 font-bold">${q.id}-savol.</span> ${q.text}</p>
+                            <span id="counter_open_q${q.id}" class="text-[10px] text-slate-400 whitespace-nowrap">0/500</span>
+                        </div>
+                        <textarea id="open_q${q.id}" rows="4" maxlength="500" oninput="updateCharCount(${q.id})" placeholder="Javobingizni batafsil yozing (maksimal 500 belgi)..." class="w-full p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs md:text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none"></textarea>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function updateCharCount(i) {
+            const textarea = document.getElementById(`open_q${i}`);
+            const counter = document.getElementById(`counter_open_q${i}`);
+            
+            // 500 tadan oshib ketsa qirqib tashlash
+            if (textarea.value.length > 500) {
+                textarea.value = textarea.value.substring(0, 500);
+            }
+
+            const len = textarea.value.length;
+            counter.innerText = `${len}/500`;
+            
+            if (len >= 470) {
+                counter.classList.add('text-red-500', 'font-bold');
+            } else {
+                counter.classList.remove('text-red-500', 'font-bold');
+            }
+        }
+
+        function generateDtmGrids() {
+            let htmlDesktop = '';
+            let htmlMobile = '';
+            for (let i = 1; i <= 35; i++) {
+                let item = `<div id="titul_${i}" class="w-7 h-7 md:w-8 md:h-8 rounded-lg border border-slate-300 dark:border-slate-700 flex items-center justify-center text-xs font-bold bg-white dark:bg-slate-800 text-slate-500">${i}</div>`;
+                htmlDesktop += item;
+                htmlMobile += item;
+            }
+            document.getElementById('dtmGridDesktop').innerHTML = htmlDesktop;
+            document.getElementById('dtmGridMobile').innerHTML = htmlMobile;
+        }
+
+        function handleAnswer(qNum, opt) {
+            userAnswers[qNum] = opt;
+            
+            const cell = document.getElementById(`titul_${qNum}`);
+            if(cell) {
+                cell.style.backgroundColor = '#fbbf24';
+                cell.style.color = '#0f172a';
+                cell.style.borderColor = '#d97706';
+            }
+
+            const count = Object.keys(userAnswers).length;
+            document.getElementById('answeredCountDesktop').innerText = `${count} / 35`;
+            document.getElementById('answeredCountMobile').innerText = `${count}/35`;
+        }
+
+        function toggleMobileDrawer(show) {
+            const drawer = document.getElementById('mobileDrawer');
+            if (show) drawer.classList.remove('hidden');
+            else drawer.classList.add('hidden');
+        }
+
+        function startTimer() {
+            const display = document.getElementById('timerDisplay');
+            timerInterval = setInterval(() => {
+                if (totalSeconds <= 0) {
+                    clearInterval(timerInterval);
+                    submitExam(true);
+                    return;
+                }
+                totalSeconds--;
+                let m = Math.floor(totalSeconds / 60);
+                let s = totalSeconds % 60;
+                display.innerText = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+                if (totalSeconds <= 600) display.classList.add('timer-alert');
+            }, 1000);
+        }
+
+        let isSubmitted = false;
+        async function submitExam(isTimeout = false) {
+            if (isSubmitted) return;
+            isSubmitted = true;
+            clearInterval(timerInterval);
+
+            let correctCount = 0;
+            for (let i = 1; i <= 35; i++) {
+                if (userAnswers[i] === correctAnswers[i]) correctCount++;
+            }
+
+            let openAnswersList = [];
+            for (let i = 1; i <= 10; i++) {
+                let val = document.getElementById(`open_q${i}`).value.trim() || "Javob berilmagan";
+                openAnswersList.push(`• ${i}-savol: ${val}`);
+            }
+
+            if (isTimeout) alert("Vaqt tugadi! Javoblaringiz avtomatik yuborilmoqda.");
+
+            let baseHeader = `⚖️ <b>@huququstoz | IMTIHON NATIJASI</b>\n` +
+                             `👤 <b>Abituriyent:</b> ${escapeHtml(userData.name)}\n` +
+                             `📞 <b>Telefon:</b> ${escapeHtml(userData.phone)}\n` +
+                             `📊 <b>Yopiq testlar:</b> ${correctCount} ta to'g'ri (35 tadan)\n\n` +
+                             `📝 <b>OCHIQ SAVOL JAVOBLARI (10 ta):</b>\n`;
+
+            let messagesToSend = [];
+            let currentMsg = baseHeader;
+
+            for (let ans of openAnswersList) {
+                if ((currentMsg + "\n" + ans).length > 3900) {
+                    messagesToSend.push(currentMsg);
+                    currentMsg = "📝 <b>OCHIQ SAVOL JAVOBLARI (davomi):</b>\n" + ans;
+                } else {
+                    currentMsg += "\n" + ans;
+                }
+            }
+            messagesToSend.push(currentMsg);
+
+            try {
+                for (let msgText of messagesToSend) {
+                    await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ chat_id: CHAT_ID, text: msgText, parse_mode: 'HTML' })
+                    });
+                }
+            } catch (err) { 
+                console.error("Xatolik yuz berdi:", err); 
+            }
+
+            document.body.style.pointerEvents = 'none';
+            const modal = document.getElementById('successModal');
+            modal.style.pointerEvents = 'auto';
+            modal.classList.remove('hidden');
+        }
+
+        function escapeHtml(text) {
+            return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        }
+
+        function toggleDarkMode() {
+            const html = document.documentElement;
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+    </script>
+</body>
+</html>
